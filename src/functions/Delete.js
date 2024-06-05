@@ -1,9 +1,9 @@
 const { app, output, input } = require('@azure/functions');
 
 const cosmosInput = input.cosmosDB({
-    databaseName: 'DemoDatabase',
-    containerName: 'DB-FB',
-    connection: 'FB-Items',
+    databaseName: 'FB-DB',
+    containerName: 'FB-Items',
+    connection: 'CosmosDB',
     sqlQuery: "select * from c where c.id = {id}"
 });
 
