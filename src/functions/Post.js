@@ -1,7 +1,7 @@
 const { app, output } = require('@azure/functions');
 
 const cosmosOutput = output.cosmosDB({
-    databaseName: 'FB-DB',
+    databaseName: 'DB-FB',
     containerName: 'FB-Items',
     connection: 'CosmosDB',
     createIfNotExists: true
