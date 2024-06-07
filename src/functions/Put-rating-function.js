@@ -4,12 +4,18 @@ const cosmosInput = input.cosmosDB({
     databaseName: 'DB-FB',
     containerName: 'FB-Items',
     connection: 'CosmosDB',
-    sqlQuery: "select * from c where c.id = {id}"
+    sqlQuery: "SELECT VALUE comment.content FROM c JOIN comment IN c.comments WHERE c.id = {filmId}",
+    parameters: [
+        {
+            name: "@filmId",
+            value: ""
+        }
+    ]
 });
 
 const cosmosOutput = output.cosmosDB({
-    databaseName: 'DemoDatabase',
-    containerName: 'Items',
+    databaseName: 'DB-FB',
+    containerName: 'FB-Items',
     connection: 'CosmosDB',
     createIfNotExists: true,
 });
@@ -19,7 +25,7 @@ app.http('putItems', {
     authLevel: 'anonymous',
     extraInputs: [cosmosInput],
     extraOutputs: [cosmosOutput],
-    route: 'items/{id}',
+    route: 'films/{filmId}/comments/content',
     handler: async (request, context) => {
         const items = context.extraInputs.get(cosmosInput);
         const data = await request.json();
