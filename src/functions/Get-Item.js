@@ -1,22 +1,20 @@
-const { app, input } = require('@azure/functions');
+const { app, input } = require("@azure/functions");
 
 const cosmosInput = input.cosmosDB({
-    databaseName: 'DB-FB',
-    containerName: 'Container-FB',
-    connection: 'CosmosDB',
-    sqlQuery: "SELECT * FROM c where c.id = {id}"
+    databaseName: "ToDoList",
+    containerName: "Items",
+    connection: "CosmosDB",
+    sqlQuery: "select * from c where c.id = {id}",
 });
 
-app.http('getItems', {
-    methods: ['GET'],
-    authLevel: 'anonymous',
+app.http("getItem", {
+    methods: ["GET"],
+    authLevel: "anonymous",
     extraInputs: [cosmosInput],
-    route: 'items/{id}',
+    route: "items/{id}",
     handler: async (request, context) => {
-        const items = context.extraInputs.get(cosmosInput);
-        return {
-            body: JSON.stringify(items),
-            status: 200
-        };
-    }
+        const item = context.extraInputs.get(cosmosInput);
+
+        return { body: JSON.stringify(item), status: 200 };
+    },
 });
