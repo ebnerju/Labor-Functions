@@ -2,22 +2,16 @@ const { app, input, output } = require('@azure/functions');
 
 const cosmosInput = input.cosmosDB({
     databaseName: 'DB-FB',
-    containerName: 'FB-Items',
+    containerName: 'Container-FB',
     connection: 'CosmosDB',
-    sqlQuery: "SELECT VALUE comment.content FROM c JOIN comment IN c.comments WHERE c.id = {filmId}",
-    parameters: [
-        {
-            name: "@filmId",
-            value: ""
-        }
-    ]
+    sqlQuery: "SELECT * FROM c where c.id = {id}",
 });
 
 const cosmosOutput = output.cosmosDB({
     databaseName: 'DB-FB',
-    containerName: 'FB-Items',
+    containerName: 'Container-FB',
     connection: 'CosmosDB',
-    createIfNotExists: true,
+    createIfNotExists: false
 });
 
 app.http('putItems', {
@@ -25,9 +19,9 @@ app.http('putItems', {
     authLevel: 'anonymous',
     extraInputs: [cosmosInput],
     extraOutputs: [cosmosOutput],
-    route: 'films/{filmId}/comments/content',
+    route: 'items/{id}',
     handler: async (request, context) => {
-        const items = context.extraInputs.get(cosmosInput);
+        const item = context.extraInputs.get(cosmosInput);
         const data = await request.json();
         data.id = item[0].id;
 
@@ -35,7 +29,8 @@ app.http('putItems', {
 
         return {
             body: JSON.stringify(data),
-            status: 200
-        };
+            status: 200,
+        }
     }
+
 });
